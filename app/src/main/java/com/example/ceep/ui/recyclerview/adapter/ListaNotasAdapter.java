@@ -14,7 +14,7 @@ import com.example.ceep.models.Nota;
 
 import java.util.List;
 
-public class ListaNotasAdapter extends RecyclerView.Adapter {
+public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.NotaViewHolder> {
     List<Nota> notas;
     private Context context;
 
@@ -26,19 +26,16 @@ public class ListaNotasAdapter extends RecyclerView.Adapter {
     //Cria as viwes
     @NonNull
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public  ListaNotasAdapter.NotaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View viewCriada = LayoutInflater.from(context).inflate(R.layout.item_nota, parent, false);
         return new NotaViewHolder(viewCriada);
     }
 
     //Pegar informações de um objeto e atrelar a views
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ListaNotasAdapter.NotaViewHolder holder, int position) {
         Nota nota = notas.get(position);
-        TextView titulo = holder.itemView.findViewById(R.id.item_nota_titulo);
-        titulo.setText(nota.getTitulo());
-        TextView descricao = holder.itemView.findViewById(R.id.item_nota_descricao);
-        descricao.setText(nota.getDescricao());
+        holder.vincula(nota);
     }
 
     @Override
@@ -46,9 +43,20 @@ public class ListaNotasAdapter extends RecyclerView.Adapter {
         return notas.size();
     }
 
-    class NotaViewHolder extends RecyclerView.ViewHolder {
+    public static class NotaViewHolder extends RecyclerView.ViewHolder {
+        private final TextView titulo;
+        private final TextView descricao;
+
         public NotaViewHolder(@NonNull View itemView) {
             super(itemView);
+            titulo = itemView.findViewById(R.id.item_nota_titulo);
+            descricao = itemView.findViewById(R.id.item_nota_descricao);
         }
+
+        public void vincula(Nota nota) {
+            titulo.setText(nota.getTitulo());
+            descricao.setText(nota.getDescricao());
+        }
+
     }
 }
