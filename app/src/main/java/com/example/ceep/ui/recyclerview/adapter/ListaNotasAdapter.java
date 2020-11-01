@@ -15,8 +15,8 @@ import com.example.ceep.models.Nota;
 import java.util.List;
 
 public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.NotaViewHolder> {
-    List<Nota> notas;
-    private Context context;
+    final private List<Nota> notas;
+    final private Context context;
 
     public ListaNotasAdapter(List<Nota> notas, Context context) {
         this.notas = notas;
@@ -54,6 +54,10 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
         }
 
         public void vincula(Nota nota) {
+            preencheCampos(nota);
+        }
+
+        private void preencheCampos(Nota nota) {
             titulo.setText(nota.getTitulo());
             descricao.setText(nota.getDescricao());
         }
