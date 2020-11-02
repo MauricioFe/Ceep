@@ -14,45 +14,62 @@ import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.models.Nota;
 import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 
-import java.io.Serializable;
 import java.util.List;
+
+import static com.example.ceep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
+import static com.example.ceep.ui.activity.NotaActivityConstantes.RESULT_CODE_NOTA_CRIADA;
+
+import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_INSERE_NOTA;
 
 public class ListaNotasActivity extends AppCompatActivity {
 
+
     private ListaNotasAdapter adapter;
-    private List<Nota> todasNotas;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
-        todasNotas = notasDeExemplo();
+        List<Nota> todasNotas = getTodasNotas();
         configuraRecyclerView(todasNotas);
+        configuraBotaoInsereNota();
+    }
+
+    private void configuraBotaoInsereNota() {
         TextView botaoInsereNota = findViewById(R.id.lista_notas_insere_nota);
         botaoInsereNota.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //inicializa activity esperando um resultado
-                startActivityForResult(new Intent(ListaNotasActivity.this, FormularioNotaActivity.class), 1);
+                vaiParaFormularioNotaActivity();
             }
         });
     }
 
+    private void vaiParaFormularioNotaActivity() {
+        //inicializa activity esperando um resultado
+        startActivityForResult(new Intent(ListaNotasActivity.this, FormularioNotaActivity.class), REQUEST_CODE_INSERE_NOTA);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (requestCode == 1 && resultCode == 2 && data.hasExtra("nota")) {
-            Nota notaRecebida = (Nota) data.getSerializableExtra("nota");
+        if (isCodigoRequisicaoInsereNota(requestCode) && isCodigoResultadoNotaCriada(resultCode) && data.hasExtra(CHAVE_NOTA)) {
+            Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
             new NotaDAO().insere(notaRecebida);
             adapter.adiciona(notaRecebida);
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private List<Nota> notasDeExemplo() {
+    private boolean isCodigoResultadoNotaCriada(int resultCode) {
+        return resultCode == RESULT_CODE_NOTA_CRIADA;
+    }
+
+    private boolean isCodigoRequisicaoInsereNota(int requestCode) {
+        return requestCode == REQUEST_CODE_INSERE_NOTA;
+    }
+
+    private List<Nota> getTodasNotas() {
         NotaDAO dao = new NotaDAO();
-        dao.insere(new Nota("Primeira nota", "Descricao da nota"));
-        dao.insere(new Nota("segunda nota", "Descricao da segunda nota"));
-        dao.insere(new Nota("Terceira nota", "Descricao da terceira nota"));
         return dao.todos();
     }
 
