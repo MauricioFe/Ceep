@@ -17,9 +17,8 @@ import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 import java.util.List;
 
 import static com.example.ceep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
-import static com.example.ceep.ui.activity.NotaActivityConstantes.RESULT_CODE_NOTA_CRIADA;
-
 import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_INSERE_NOTA;
+import static com.example.ceep.ui.activity.NotaActivityConstantes.RESULT_CODE_NOTA_CRIADA;
 
 public class ListaNotasActivity extends AppCompatActivity {
 
@@ -52,12 +51,24 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (isCodigoRequisicaoInsereNota(requestCode) && isCodigoResultadoNotaCriada(resultCode) && data.hasExtra(CHAVE_NOTA)) {
+        if (isResultNota(requestCode, resultCode, data)) {
             Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-            new NotaDAO().insere(notaRecebida);
-            adapter.adiciona(notaRecebida);
+            adicion(notaRecebida);
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void adicion(Nota nota) {
+        new NotaDAO().insere(nota);
+        adapter.adiciona(nota);
+    }
+
+    private boolean isResultNota(int requestCode, int resultCode, @Nullable Intent data) {
+        return isCodigoRequisicaoInsereNota(requestCode) && isCodigoResultadoNotaCriada(resultCode) && hasNota(data);
+    }
+
+    private boolean hasNota(@Nullable Intent data) {
+        return data.hasExtra(CHAVE_NOTA);
     }
 
     private boolean isCodigoResultadoNotaCriada(int resultCode) {
