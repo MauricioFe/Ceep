@@ -1,30 +1,24 @@
 package com.example.ceep.ui.activity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.example.ceep.R;
 import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.models.Nota;
 import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
+import com.example.ceep.ui.recyclerview.adapter.OnItemClickListener;
 
 import java.util.List;
-
 import static com.example.ceep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
 import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_INSERE_NOTA;
 import static com.example.ceep.ui.activity.NotaActivityConstantes.RESULT_CODE_NOTA_CRIADA;
 
 public class ListaNotasActivity extends AppCompatActivity {
-
-
     private ListaNotasAdapter adapter;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -92,5 +86,11 @@ public class ListaNotasActivity extends AppCompatActivity {
     private void configuraAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
         adapter = new ListaNotasAdapter(todasNotas, this);
         listaNotas.setAdapter(adapter);
+        adapter.setOnItemClickListener(new OnItemClickListener() {
+            @Override
+            public void onItemClick() {
+
+            }
+        });
     }
 }
