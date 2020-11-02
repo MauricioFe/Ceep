@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -13,6 +14,7 @@ import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.models.Nota;
 import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class ListaNotasActivity extends AppCompatActivity {
@@ -30,9 +32,20 @@ public class ListaNotasActivity extends AppCompatActivity {
         botaoInsereNota.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(ListaNotasActivity.this, FormularioNotaActivity.class));
+                //inicializa activity esperando um resultado
+                startActivityForResult(new Intent(ListaNotasActivity.this, FormularioNotaActivity.class), 1);
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        if (requestCode == 1 && resultCode == 2 && data.hasExtra("nota")) {
+            Nota notaRecebida = (Nota) data.getSerializableExtra("nota");
+            new NotaDAO().insere(notaRecebida);
+            adapter.adiciona(notaRecebida);
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private List<Nota> notasDeExemplo() {
@@ -41,15 +54,6 @@ public class ListaNotasActivity extends AppCompatActivity {
         dao.insere(new Nota("segunda nota", "Descricao da segunda nota"));
         dao.insere(new Nota("Terceira nota", "Descricao da terceira nota"));
         return dao.todos();
-    }
-
-    @Override
-    protected void onResume() {
-        NotaDAO dao = new NotaDAO();
-        todasNotas.clear();
-        todasNotas.addAll(dao.todos());
-        adapter.notifyDataSetChanged();
-        super.onResume();
     }
 
     private void configuraRecyclerView(List<Nota> todasNotas) {
