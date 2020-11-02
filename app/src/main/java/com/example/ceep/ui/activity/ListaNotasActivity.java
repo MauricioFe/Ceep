@@ -17,11 +17,15 @@ import java.util.List;
 
 public class ListaNotasActivity extends AppCompatActivity {
 
+    private ListaNotasAdapter adapter;
+    private List<Nota> todasNotas;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
-
+        todasNotas = notasDeExemplo();
+        configuraRecyclerView(todasNotas);
         TextView botaoInsereNota = findViewById(R.id.lista_notas_insere_nota);
         botaoInsereNota.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -31,10 +35,20 @@ public class ListaNotasActivity extends AppCompatActivity {
         });
     }
 
+    private List<Nota> notasDeExemplo() {
+        NotaDAO dao = new NotaDAO();
+        dao.insere(new Nota("Primeira nota", "Descricao da nota"));
+        dao.insere(new Nota("segunda nota", "Descricao da segunda nota"));
+        dao.insere(new Nota("Terceira nota", "Descricao da terceira nota"));
+        return dao.todos();
+    }
+
     @Override
     protected void onResume() {
-        List<Nota> todasNotas = new NotaDAO().todos();
-        configuraRecyclerView(todasNotas);
+        NotaDAO dao = new NotaDAO();
+        todasNotas.clear();
+        todasNotas.addAll(dao.todos());
+        adapter.notifyDataSetChanged();
         super.onResume();
     }
 
@@ -44,6 +58,7 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private void configuraAdapter(List<Nota> todasNotas, RecyclerView listaNotas) {
-        listaNotas.setAdapter(new ListaNotasAdapter(todasNotas, this));
+        adapter = new ListaNotasAdapter(todasNotas, this);
+        listaNotas.setAdapter(adapter);
     }
 }
