@@ -29,32 +29,18 @@ import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_E
 import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_INSERE_NOTA;
 
 public class ListaNotasActivity extends AppCompatActivity {
+    public static final String TITULO_APPBAR = "Notas";
     private ListaNotasAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
+        setTitle(TITULO_APPBAR);
         List<Nota> todasNotas = getTodasNotas();
         configuraRecyclerView(todasNotas);
         configuraBotaoInsereNota();
     }
-
-    private void configuraBotaoInsereNota() {
-        TextView botaoInsereNota = findViewById(R.id.lista_notas_insere_nota);
-        botaoInsereNota.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                vaiParaFormularioNotaActivityInsere();
-            }
-        });
-    }
-
-    private void vaiParaFormularioNotaActivityInsere() {
-        //inicializa activity esperando um resultado
-        startActivityForResult(new Intent(ListaNotasActivity.this, FormularioNotaActivity.class), REQUEST_CODE_INSERE_NOTA);
-    }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (isResultInsertNota(requestCode, data)) {
@@ -77,6 +63,21 @@ public class ListaNotasActivity extends AppCompatActivity {
 
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+    private void configuraBotaoInsereNota() {
+        TextView botaoInsereNota = findViewById(R.id.lista_notas_insere_nota);
+        botaoInsereNota.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                vaiParaFormularioNotaActivityInsere();
+            }
+        });
+    }
+
+    private void vaiParaFormularioNotaActivityInsere() {
+        //inicializa activity esperando um resultado
+        startActivityForResult(new Intent(ListaNotasActivity.this, FormularioNotaActivity.class), REQUEST_CODE_INSERE_NOTA);
     }
 
     private void update(Nota nota, int posicao) {
@@ -106,7 +107,7 @@ public class ListaNotasActivity extends AppCompatActivity {
     }
 
     private boolean hasNota(@Nullable Intent data) {
-        return data.hasExtra(CHAVE_NOTA);
+        return data != null && data.hasExtra(CHAVE_NOTA);
     }
 
     private boolean isResultOk(int resultCode) {

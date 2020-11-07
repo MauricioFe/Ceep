@@ -21,6 +21,8 @@ import static com.example.ceep.ui.activity.NotaActivityConstantes.POSICAO_INVALI
 public class FormularioNotaActivity extends AppCompatActivity {
 
 
+    public static final String TITULO_APPBAR_INSERE = "Insere Nota";
+    public static final String TITULO_APPBAR_ALTERA = "Altera Nota";
     private int posicaoRecebida = POSICAO_INVALIDA;
     private EditText descricao;
     private EditText titulo;
@@ -30,8 +32,10 @@ public class FormularioNotaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_formulario_nota);
         inicializaCampos();
+        setTitle(TITULO_APPBAR_INSERE);
         Intent dadosRecebidos = getIntent();
         if (dadosRecebidos.hasExtra(CHAVE_NOTA)) {
+            setTitle(TITULO_APPBAR_ALTERA);
             Nota notaRecebida = (Nota) dadosRecebidos.getSerializableExtra(CHAVE_NOTA);
             posicaoRecebida = dadosRecebidos.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
             preencheCampos(notaRecebida);
