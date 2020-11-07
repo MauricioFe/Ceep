@@ -13,7 +13,6 @@ import com.example.ceep.R;
 import com.example.ceep.models.Nota;
 import com.example.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 

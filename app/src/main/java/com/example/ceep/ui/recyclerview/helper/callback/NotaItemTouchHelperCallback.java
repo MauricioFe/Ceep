@@ -8,7 +8,7 @@ import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 
 public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
-    private ListaNotasAdapter adapter;
+    private final ListaNotasAdapter adapter;
 
     public NotaItemTouchHelperCallback(ListaNotasAdapter adapter) {
         this.adapter = adapter;
@@ -27,8 +27,7 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
     public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
         int posicaoInicial = viewHolder.getAdapterPosition();
         int posicaoFinal = target.getAdapterPosition();
-        new NotaDAO().troca(posicaoInicial, posicaoFinal);
-        adapter.troca(posicaoInicial, posicaoFinal);
+        trocaNotas(posicaoInicial, posicaoFinal);
         return true;
     }
 
@@ -36,7 +35,16 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
         int position = viewHolder.getAdapterPosition();
+        removeNota(position);
+    }
+
+    private void removeNota(int position) {
         new NotaDAO().remove(position);
         adapter.remove(position);
+    }
+
+    private void trocaNotas(int posicaoInicial, int posicaoFinal) {
+        new NotaDAO().troca(posicaoInicial, posicaoFinal);
+        adapter.troca(posicaoInicial, posicaoFinal);
     }
 }
