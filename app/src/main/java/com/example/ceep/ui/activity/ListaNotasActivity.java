@@ -56,10 +56,14 @@ public class ListaNotasActivity extends AppCompatActivity {
             Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
             adiciona(notaRecebida);
         }
-        if (requestCode == 2 && resultCode == RESULT_CODE_NOTA_CRIADA && hasNota(data)){
+        if (requestCode == 2 && resultCode == RESULT_CODE_NOTA_CRIADA && hasNota(data)) {
             assert data != null;
-            Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-            Toast.makeText(this, notaRecebida.getTitulo(), Toast.LENGTH_SHORT).show();
+            if (data.hasExtra("posicao")) {
+                Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+                int posicaoRecebida = data.getIntExtra("posicao", -1);
+                new NotaDAO().altera(posicaoRecebida, notaRecebida);
+                adapter.altera(posicaoRecebida, notaRecebida);
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
@@ -103,9 +107,10 @@ public class ListaNotasActivity extends AppCompatActivity {
         listaNotas.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick(Nota nota) {
+            public void onItemClick(Nota nota, int position) {
                 Intent intent = new Intent(ListaNotasActivity.this, FormularioNotaActivity.class);
                 intent.putExtra(CHAVE_NOTA, nota);
+                intent.putExtra("posicao", position);
                 startActivityForResult(intent, 2);
             }
         });
