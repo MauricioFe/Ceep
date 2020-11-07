@@ -4,7 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.ceep.dao.NotaDAO;
+import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
+
 public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
+    private ListaNotasAdapter adapter;
+
+    public NotaItemTouchHelperCallback(ListaNotasAdapter adapter) {
+        this.adapter = adapter;
+    }
 
     //definição para a fazermos animação
     @Override
@@ -22,6 +30,8 @@ public class NotaItemTouchHelperCallback extends ItemTouchHelper.Callback {
     //quando o movimento for de deslizar esse método vai ser acionado
     @Override
     public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-
+        int position = viewHolder.getAdapterPosition();
+        new NotaDAO().remove(position);
+        adapter.remove(position);
     }
 }
