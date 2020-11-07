@@ -1,24 +1,30 @@
 package com.example.ceep.ui.activity;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.ceep.R;
 import com.example.ceep.dao.NotaDAO;
 import com.example.ceep.models.Nota;
 import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
-import com.example.ceep.ui.recyclerview.adapter.OnItemClickListener;
+import com.example.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 import java.util.List;
+
 import static com.example.ceep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
 import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_INSERE_NOTA;
 import static com.example.ceep.ui.activity.NotaActivityConstantes.RESULT_CODE_NOTA_CRIADA;
 
 public class ListaNotasActivity extends AppCompatActivity {
     private ListaNotasAdapter adapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,13 +52,19 @@ public class ListaNotasActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (isResultNota(requestCode, resultCode, data)) {
+            assert data != null;
             Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-            adicion(notaRecebida);
+            adiciona(notaRecebida);
+        }
+        if (requestCode == 2 && resultCode == RESULT_CODE_NOTA_CRIADA && hasNota(data)){
+            assert data != null;
+            Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+            Toast.makeText(this, notaRecebida.getTitulo(), Toast.LENGTH_SHORT).show();
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
 
-    private void adicion(Nota nota) {
+    private void adiciona(Nota nota) {
         new NotaDAO().insere(nota);
         adapter.adiciona(nota);
     }
@@ -75,6 +87,9 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private List<Nota> getTodasNotas() {
         NotaDAO dao = new NotaDAO();
+        for (int i = 0; i < 10; i++) {
+            dao.insere(new Nota("Título " + (i + 1), "Descrição " + (i + 1)));
+        }
         return dao.todos();
     }
 
@@ -88,8 +103,10 @@ public class ListaNotasActivity extends AppCompatActivity {
         listaNotas.setAdapter(adapter);
         adapter.setOnItemClickListener(new OnItemClickListener() {
             @Override
-            public void onItemClick() {
-
+            public void onItemClick(Nota nota) {
+                Intent intent = new Intent(ListaNotasActivity.this, FormularioNotaActivity.class);
+                intent.putExtra(CHAVE_NOTA, nota);
+                startActivityForResult(intent, 2);
             }
         });
     }

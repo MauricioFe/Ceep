@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.ceep.R;
 import com.example.ceep.models.Nota;
+import com.example.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 
 import java.util.List;
 
@@ -31,7 +32,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     //Cria as viwes
     @NonNull
     @Override
-    public  ListaNotasAdapter.NotaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public ListaNotasAdapter.NotaViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View viewCriada = LayoutInflater.from(context).inflate(R.layout.item_nota, parent, false);
         return new NotaViewHolder(viewCriada);
     }
@@ -51,6 +52,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
     public class NotaViewHolder extends RecyclerView.ViewHolder {
         private final TextView titulo;
         private final TextView descricao;
+        private Nota nota;
 
 
         public NotaViewHolder(@NonNull View itemView) {
@@ -60,12 +62,13 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onItemClickListener.onItemClick();
+                    onItemClickListener.onItemClick(nota);
                 }
             });
         }
 
         public void vincula(Nota nota) {
+            this.nota = nota;
             preencheCampos(nota);
         }
 
@@ -75,7 +78,7 @@ public class ListaNotasAdapter extends RecyclerView.Adapter<ListaNotasAdapter.No
         }
     }
 
-    public  void adiciona(Nota nota){
+    public void adiciona(Nota nota) {
         notas.add(nota);
         this.notifyDataSetChanged();
     }
