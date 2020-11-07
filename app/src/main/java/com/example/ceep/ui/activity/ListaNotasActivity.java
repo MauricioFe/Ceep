@@ -20,6 +20,7 @@ import com.example.ceep.ui.recyclerview.adapter.ListaNotasAdapter;
 import com.example.ceep.ui.recyclerview.adapter.listener.OnItemClickListener;
 import com.example.ceep.ui.recyclerview.helper.callback.NotaItemTouchHelperCallback;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.ceep.ui.activity.NotaActivityConstantes.CHAVE_NOTA;
@@ -37,7 +38,7 @@ public class ListaNotasActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_notas);
         setTitle(TITULO_APPBAR);
-        List<Nota> todasNotas = getTodasNotas();
+        List<Nota> todasNotas = new ArrayList<>();
         configuraRecyclerView(todasNotas);
         configuraBotaoInsereNota();
     }
@@ -116,14 +117,6 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     private boolean isCodigoRequisicaoInsereNota(int requestCode) {
         return requestCode == REQUEST_CODE_INSERE_NOTA;
-    }
-
-    private List<Nota> getTodasNotas() {
-        NotaDAO dao = new NotaDAO();
-        for (int i = 0; i < 10; i++) {
-            dao.insere(new Nota("Título " + (i + 1), "Descrição " + (i + 1)));
-        }
-        return dao.todos();
     }
 
     private void configuraRecyclerView(List<Nota> todasNotas) {
