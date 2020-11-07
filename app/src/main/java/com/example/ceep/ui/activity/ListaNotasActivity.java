@@ -1,5 +1,6 @@
 package com.example.ceep.ui.activity;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -23,7 +24,6 @@ import static com.example.ceep.ui.activity.NotaActivityConstantes.CHAVE_POSICAO;
 import static com.example.ceep.ui.activity.NotaActivityConstantes.POSICAO_INVALIDA;
 import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_EDITA_NOTA;
 import static com.example.ceep.ui.activity.NotaActivityConstantes.REQUEST_CODE_INSERE_NOTA;
-import static com.example.ceep.ui.activity.NotaActivityConstantes.RESULT_CODE_NOTA_CRIADA;
 
 public class ListaNotasActivity extends AppCompatActivity {
     private ListaNotasAdapter adapter;
@@ -54,18 +54,22 @@ public class ListaNotasActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        if (isResultInsertNota(requestCode, resultCode, data)) {
-            assert data != null;
-            Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-            adiciona(notaRecebida);
+        if (isResultInsertNota(requestCode, data)) {
+            if (isResultOk(resultCode)) {
+                assert data != null;
+                Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+                adiciona(notaRecebida);
+            }
         }
-        if (isResultUpdateNota(requestCode, resultCode, data)) {
-            Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
-            int posicaoRecebida = data.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
-            if (isPositionValidate(posicaoRecebida)) {
-                update(notaRecebida, posicaoRecebida);
-            }else {
-                Toast.makeText(this, "Ocorreu um problema na alteração da nota", Toast.LENGTH_SHORT).show();
+        if (isResultUpdateNota(requestCode, data)) {
+            if (isResultOk(resultCode)) {
+                Nota notaRecebida = (Nota) data.getSerializableExtra(CHAVE_NOTA);
+                int posicaoRecebida = data.getIntExtra(CHAVE_POSICAO, POSICAO_INVALIDA);
+                if (isPositionValidate(posicaoRecebida)) {
+                    update(notaRecebida, posicaoRecebida);
+                } else {
+                    Toast.makeText(this, "Ocorreu um problema na alteração da nota", Toast.LENGTH_SHORT).show();
+                }
             }
 
         }
@@ -81,8 +85,8 @@ public class ListaNotasActivity extends AppCompatActivity {
         return posicaoRecebida > POSICAO_INVALIDA;
     }
 
-    private boolean isResultUpdateNota(int requestCode, int resultCode, @Nullable Intent data) {
-        return isCodeRequestUpadateNota(requestCode) && isCodigoResultadoNotaCriada(resultCode) && hasNota(data);
+    private boolean isResultUpdateNota(int requestCode, @Nullable Intent data) {
+        return isCodeRequestUpadateNota(requestCode) && hasNota(data);
     }
 
     private boolean isCodeRequestUpadateNota(int requestCode) {
@@ -94,16 +98,16 @@ public class ListaNotasActivity extends AppCompatActivity {
         adapter.adiciona(nota);
     }
 
-    private boolean isResultInsertNota(int requestCode, int resultCode, @Nullable Intent data) {
-        return isCodigoRequisicaoInsereNota(requestCode) && isCodigoResultadoNotaCriada(resultCode) && hasNota(data);
+    private boolean isResultInsertNota(int requestCode, @Nullable Intent data) {
+        return isCodigoRequisicaoInsereNota(requestCode) && hasNota(data);
     }
 
     private boolean hasNota(@Nullable Intent data) {
         return data.hasExtra(CHAVE_NOTA);
     }
 
-    private boolean isCodigoResultadoNotaCriada(int resultCode) {
-        return resultCode == RESULT_CODE_NOTA_CRIADA;
+    private boolean isResultOk(int resultCode) {
+        return resultCode == Activity.RESULT_OK;
     }
 
     private boolean isCodigoRequisicaoInsereNota(int requestCode) {
